@@ -1,4 +1,4 @@
-# Stage 1 - Create yarn install skeleton layer
+# Stage 1 - Create yarn install skeleton layer 
 FROM node:20-bookworm-slim AS packages
 
 WORKDIR /app
