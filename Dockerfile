@@ -1,5 +1,5 @@
 # Stage 1 - Create yarn install skeleton layer 
-FROM node:20-bookworm-slim AS builder
+FROM node:20-bullseye-slim as builder
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -36,11 +36,11 @@ RUN yarn --cwd ./packages/backend add pg
 RUN yarn --cwd packages/app add @backstage/plugin-kubernetes
 RUN yarn --cwd packages/backend add @backstage/plugin-kubernetes-backend
 # Construir la aplicación
-RUN yarn build:all
+RUN yarn build:backend
 
 
 # Production stage
-FROM node:18-bullseye-slim
+FROM node:20-bullseye-slim
 
 RUN apt-get update && apt-get install -y \
     curl \
@@ -67,10 +67,10 @@ RUN echo "=== RUNTIME FILES ===" && \
     ls -la packages/backend/dist/ 2>/dev/null || echo "No dist directory found" && \
     echo "=== END RUNTIME FILES ==="
 
-EXPOSE 7007 
+ 
 
 
 ENTRYPOINT ["dumb-init", "--"]
-#CMD ["sh", "-c", "yarn start  2>/dev/null"]
+CMD ["sh", "-c", "yarn start  2>/dev/null"]
 #CMD ["sh", "-c", "node packages/backend/dist/index.js --config app-config.yaml & yarn workspace @backstage/app-default start"]
-CMD ["sh", "-c", "if yarn workspace backend start 2>/dev/null; then exit 0; elif yarn dev 2>/dev/null; then exit 0; elif node packages/backend/dist/index.js 2>/dev/null; then exit 0; else echo 'No suitable start command found' && yarn --help; fi"]
+#CMD ["sh", "-c", "if yarn workspace backend start 2>/dev/null; then exit 0; elif yarn dev 2>/dev/null; then exit 0; elif node packages/backend/dist/index.js 2>/dev/null; then exit 0; else echo 'No suitable start command found' && yarn --help; fi"]
