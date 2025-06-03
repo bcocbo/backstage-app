@@ -6,7 +6,7 @@ metadata:
   name: guest
 spec:
   memberOf: [guests]
-
+---
 
 apiVersion: backstage.io/v1alpha1
 kind: User
