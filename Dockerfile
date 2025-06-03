@@ -31,6 +31,9 @@ RUN yarn install --immutable --network-timeout 600000
 # Copiar configuración personalizada y renombrarla como app-config.yaml
 COPY app-config.yaml ./app-config.yaml
 COPY app-config.yaml ./packages/backend/app-config.yaml
+COPY /packages/app/src ./packages/app/src
+COPY /packages/backend/src ./packages/backend/src
+COPY /examples ./examples
 
 RUN yarn --cwd ./packages/backend add pg
 RUN yarn --cwd packages/app add @backstage/plugin-kubernetes
