@@ -1,56 +1,77 @@
-FROM node:20-bookworm-slim
+# Stage 1 - Create yarn install skeleton layer 
+FROM node:20-bullseye-slim as builder
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    python3 \
+    g++ \
+    make \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set Python interpreter for `node-gyp` to use
-ENV PYTHON=/usr/bin/python3
-
-# Install isolate-vm dependencies, these are needed by the @backstage/plugin-scaffolder-backend.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    apt-get install -y --no-install-recommends python3 g++ build-essential && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install sqlite3 dependencies. You can skip this if you don't use sqlite3 in the image,
-# in which case you should also move better-sqlite3 to "devDependencies" in package.json.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    apt-get install -y --no-install-recommends libsqlite3-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# From here on we use the least-privileged `node` user to run the backend.
-USER node
-
-# This should create the app dir as `node`.
-# If it is instead created as `root` then the `tar` command below will fail: `can't create directory 'packages/': Permission denied`.
-# If this occurs, then ensure BuildKit is enabled (`DOCKER_BUILDKIT=1`) so the app dir is correctly created as `node`.
 WORKDIR /app
 
-# Copy files needed by Yarn
-COPY --chown=node:node .yarn ./.yarn
-COPY --chown=node:node .yarnrc.yml ./
-COPY --chown=node:node backstage.json ./
+# Instalar Backstage CLI globalmente
+RUN npm install -g @backstage/create-app
 
-# This switches many Node.js dependencies to production mode.
-ENV NODE_ENV=production
+# Crear una nueva aplicación Backstage
+# (Esto es interactivo, así que necesitamos automatizarlo)
+RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
 
-# This disables node snapshot for Node 20 to work with the Scaffolder
-ENV NODE_OPTIONS="--no-node-snapshot"
+# Cambiar al directorio de la aplicación
+WORKDIR /app/backstage-app
 
-# Copy repo skeleton first, to avoid unnecessary docker cache invalidation.
-# The skeleton contains the package.json of each package in the monorepo,
-# and along with yarn.lock and the root package.json, that's enough to run yarn install.
-COPY --chown=node:node yarn.lock package.json packages/backend/dist/skeleton.tar.gz ./
-RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
+# Instalar dependencias
+RUN yarn add @testing-library/react@^16.0.0 react@^18.0.0 react-dom@^18.0.0
 
-RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
-    yarn workspaces focus --all --production && rm -rf "$(yarn cache clean)"
+RUN yarn install --immutable --network-timeout 600000
 
-# This will include the examples, if you don't need these simply remove this line
-COPY --chown=node:node examples ./examples
 
-# Then copy the rest of the backend bundle, along with any other files we might want.
-COPY --chown=node:node packages/backend/dist/bundle.tar.gz app-config*.yaml ./
-RUN tar xzf bundle.tar.gz && rm bundle.tar.gz
 
-CMD ["node", "packages/backend", "--config", "app-config.yaml"]
+# Copiar configuración personalizada y renombrarla como app-config.yaml
+COPY app-config.yaml ./app-config.yaml
+COPY app-config.yaml ./packages/backend/app-config.yaml
+
+RUN yarn --cwd ./packages/backend add pg
+RUN yarn --cwd packages/app add @backstage/plugin-kubernetes
+RUN yarn --cwd packages/backend add @backstage/plugin-kubernetes-backend
+# Construir la aplicación
+RUN yarn build:backend
+
+
+# Production stage
+FROM node:20-bullseye-slim
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    dumb-init \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /app && \
+    groupadd -r backstage && \
+    useradd -r -g backstage -d /app backstage && \
+    chown backstage:backstage /app
+
+WORKDIR /app
+USER backstage
+
+
+# Copiar TODA la aplicación construida (approach más seguro)
+COPY --from=builder --chown=backstage:backstage /app/backstage-app ./
+
+# DEBUG en runtime: Ver qué tenemos disponible
+RUN echo "=== RUNTIME FILES ===" && \
+    ls -la . && \
+    ls -la packages/backend/ && \
+    ls -la packages/backend/dist/ 2>/dev/null || echo "No dist directory found" && \
+    echo "=== END RUNTIME FILES ==="
+
+ 
+
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["sh", "-c", "yarn workspace backend start   2>/dev/null"]
+ 
+#CMD ["sh", "-c", "node packages/backend/dist/index.js --config app-config.yaml & yarn workspace @backstage/app-default start"]
+#CMD ["sh", "-c", "if yarn workspace backend start 2>/dev/null; then exit 0; elif yarn dev 2>/dev/null; then exit 0; elif node packages/backend/dist/index.js 2>/dev/null; then exit 0; else echo 'No suitable start command found' && yarn --help; fi"]
