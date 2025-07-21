@@ -31,6 +31,7 @@ import {
   SignInPage,
   SignInProviderConfig,
 } from '@backstage/core-components';
+import { githubAuthApiRef } from '@backstage/core-plugin-api';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';

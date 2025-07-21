@@ -1,8 +1,8 @@
 app:
   title: Scaffolded Backstage App
-  baseUrl: http://localhost:7007
+  baseUrl: http://localhost:3000
   listen:
-   host: 0.0.0.0
+    host: 0.0.0.0
 
 organization:
   name: My Company
@@ -24,10 +24,10 @@ backend:
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
   cors:
-    origin:  [http://localhost:7007, http://*:7007]
+    origin: http://localhost:3000
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
-  # This is for ocl development only, it is not recommended to use this in production
+  # This is for local development only, it is not recommended to use this in production
   # The production database configuration is stored in app-config.production.yaml
   database:
     client: pg
@@ -77,19 +77,20 @@ techdocs:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
 auth:
-  environment: production
+  # see https://backstage.io/docs/auth/ to learn about auth providers
   providers:
+    # See https://backstage.io/docs/auth/guest/provider
+    guest: {}
     github:
-      production:
-        clientId: ${AUTH_GITHUB_CLIENT_ID}
-        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
-        ## Descomenta si usas GitHub Enterprise
-        # enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
+      development:
+        clientId: Ov23liCjXK2wLz1lI6X5
+        clientSecret: 09349c81383a0b4256d4817bf8d2e3715e7f45f7
         signIn:
           resolvers:
             - resolver: usernameMatchingUserEntityName
 
-#scaffolder:
+
+scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
 
 catalog:
@@ -126,9 +127,9 @@ catalog:
     #     - allow: [User, Group]
   # Experimental: Always use the search method in UrlReaderProcessor.
   # New adopters are encouraged to enable it as this behavior will be the default in a future release.
-  useUrlReadersSearch: false
+  useUrlReadersSearch: true
 
-
+kubernetes:
   # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
 
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
