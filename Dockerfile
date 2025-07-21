@@ -39,7 +39,7 @@ RUN yarn --cwd ./packages/backend add pg
 RUN yarn --cwd packages/app add @backstage/plugin-kubernetes
 RUN yarn --cwd packages/backend add @backstage/plugin-kubernetes-backend
 # Construir la aplicación
-RUN yarn build:backend
+RUN yarn install
 
 
 # Production stage
