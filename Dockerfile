@@ -40,7 +40,7 @@ COPY /examples ./examples
 
 
 # Construir la aplicación
-RUN yarn install
+# RUN yarn install
 
 
 # Production stage
