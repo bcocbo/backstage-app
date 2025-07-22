@@ -20,7 +20,7 @@ RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
 
 # Cambiar al directorio de la aplicación
 WORKDIR /app/backstage-app
-RUN npm install @backstage/canon
+
 
 
 # Instalar dependencias
