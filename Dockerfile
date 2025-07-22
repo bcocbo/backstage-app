@@ -42,7 +42,7 @@ COPY /examples ./examples
 
 
 # Construir la aplicación
-RUN yarn tsc
+
 RUN yarn build:backend
 
 
