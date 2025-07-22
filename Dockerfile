@@ -22,7 +22,7 @@ RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
 WORKDIR /app/backstage-app
 
 # Instalar dependencias
-RUN yarn add @testing-library/react@^16.0.0 react@^18.0.0 react-dom@^18.0.0
+# RUN yarn add @testing-library/react@^16.0.0 react@^18.0.0 react-dom@^18.0.0
 RUN yarn --cwd ./packages/backend add pg
 RUN yarn --cwd packages/app add @backstage/plugin-kubernetes
 RUN yarn --cwd packages/backend add @backstage/plugin-kubernetes-backend
@@ -32,6 +32,7 @@ RUN yarn install --immutable --network-timeout 600000
 
 # Copiar configuración personalizada y renombrarla como app-config.yaml
 COPY app-config.yaml ./app-config.yaml
+COPY app-config.production.yaml ./app-config.production.yaml
 #COPY app-config.yaml ./packages/backend/app-config.yaml
 COPY /packages/app/src ./packages/app/src
 COPY /packages/backend/src ./packages/backend/src
@@ -67,10 +68,9 @@ COPY --from=builder --chown=backstage:backstage /app/backstage-app ./
 RUN echo "=== RUNTIME FILES ===" && \
     ls -la . && \
     ls -la packages/backend/ && \
-    ls -la packages/backend/dist/ 2>/dev/null || echo "No dist directory found" && \
+    ls -la packages/app/ 2>/dev/null || echo "No dist directory found" && \
     echo "=== END RUNTIME FILES ==="
 
- 
 
 
 ENTRYPOINT ["dumb-init", "--"]
