@@ -42,7 +42,7 @@ COPY /examples ./examples
 
 # Construir la aplicación
 
-RUN yarn build:backend
+RUN yarn build:all
 
 
 # Production stage
