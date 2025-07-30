@@ -41,8 +41,8 @@ RUN yarn install --immutable --network-timeout 600000
 RUN yarn build:all
 COPY app-config.yaml ./app-config.yaml
 COPY app-config.production.yaml ./app-config.production.yaml
-COPY /packages/app/src ./packages/app/src
-COPY /packages/backend/src ./packages/backend/src
+#COPY /packages/app/src ./packages/app/src
+#COPY /packages/backend/src ./packages/backend/src
 COPY /examples ./examples
 
 # Production stage
