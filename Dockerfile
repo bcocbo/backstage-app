@@ -26,8 +26,8 @@ WORKDIR /app/backstage-app
 # Instalar dependencias
 # RUN yarn add @testing-library/react@^16.0.0 react@^18.0.0 react-dom@^18.0.0
 RUN yarn --cwd ./packages/backend add pg
-RUN yarn --cwd packages/app add @backstage/plugin-kubernetes
-RUN yarn --cwd packages/backend add @backstage/plugin-kubernetes-backend
+RUN yarn --cwd ./packages/app add @backstage/plugin-kubernetes
+RUN yarn --cwd ./packages/backend add @backstage/plugin-kubernetes-backend
 RUN yarn install --immutable --network-timeout 600000
 
 
@@ -40,7 +40,7 @@ RUN yarn install --immutable --network-timeout 600000
 
 RUN yarn build:backend
 COPY app-config.yaml ./app-config.yaml
-#COPY app-config.production.yaml ./app-config.production.yaml
+COPY app-config.production.yaml ./app-config.production.yaml
 COPY /packages/app/src/App.tsx ./packages/app/src/App.tsx
 COPY /packages/backend/src/index.ts ./packages/backend/src/index.ts
 COPY /examples ./examples
