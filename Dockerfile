@@ -33,17 +33,17 @@ RUN yarn install --immutable --network-timeout 600000
 
 
 # Copiar configuración personalizada y renombrarla como app-config.yaml
-COPY app-config.yaml ./app-config.yaml
-COPY app-config.production.yaml ./app-config.production.yaml
-COPY /packages/app/src ./packages/app/src
-COPY /packages/backend/src ./packages/backend/src
-COPY /examples ./examples
+
 
 
 # Construir la aplicación
 
 RUN yarn build:all
-
+COPY app-config.yaml ./app-config.yaml
+COPY app-config.production.yaml ./app-config.production.yaml
+COPY /packages/app/src ./packages/app/src
+COPY /packages/backend/src ./packages/backend/src
+COPY /examples ./examples
 
 # Production stage
 FROM node:20-bullseye-slim
