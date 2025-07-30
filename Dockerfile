@@ -38,11 +38,11 @@ RUN yarn install --immutable --network-timeout 600000
 
 # Construir la aplicación
 
-RUN yarn build:all
+RUN yarn build:backend
 COPY app-config.yaml ./app-config.yaml
-COPY app-config.production.yaml ./app-config.production.yaml
-#COPY /packages/app/src ./packages/app/src
-#COPY /packages/backend/src ./packages/backend/src
+#COPY app-config.production.yaml ./app-config.production.yaml
+COPY /packages/app/src/App.tsx ./packages/app/src/App.tsx
+COPY /packages/backend/src/index.ts ./packages/backend/src/index.ts
 COPY /examples ./examples
 
 # Production stage
