@@ -1,6 +1,6 @@
 app:
   title: Scaffolded Backstage App
-  baseUrl: http://localhost:3000
+  baseUrl: http://localhost:7007
   listen:
     host: 0.0.0.0
 
@@ -84,7 +84,7 @@ auth:
     github:
       development:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
-        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET} 
         signIn:
           resolvers:
             - resolver: usernameMatchingUserEntityName
