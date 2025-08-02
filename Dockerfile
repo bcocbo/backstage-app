@@ -35,8 +35,8 @@ RUN yarn install --immutable --network-timeout 600000
 # Copiar configuración personalizada y renombrarla como app-config.yaml
 COPY app-config.yaml ./app-config.yaml
 COPY app-config.production.yaml ./app-config.production.yaml
-# COPY /packages/app/ ./packages/app/
-# COPY /packages/backend/ ./packages/backend/
+COPY /packages/app/src/App.tsx ./packages/app/src/App.tsx
+COPY /packages/backend/src/index.ts ./packages/backend/src/index.ts
 COPY /examples ./examples
 
 
