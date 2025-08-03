@@ -40,7 +40,6 @@ COPY /packages/app/src/App.tsx ./packages/app/src/App.tsx
 COPY /packages/backend/src/index.ts ./packages/backend/src/index.ts
 COPY /examples ./examples
 
-
 # Construir la aplicación
 
 RUN yarn build:backend
