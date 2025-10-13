@@ -85,6 +85,7 @@ auth:
       development:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
         clientSecret: ${AUTH_GITHUB_CLIENT_SECRET} 
+        callbackUrl: 'http://apps.pocarqnube.com/backstage/api/auth/github/handler/frame'
         signIn:
           resolvers:
             - resolver: usernameMatchingUserEntityName
