@@ -16,7 +16,7 @@ RUN npm install -g @backstage/create-app
 
 # Crear una nueva aplicación Backstage
 # (Esto es interactivo, así que necesitamos automatizarlo)
-RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
+RUN echo "backstage-app" | npx @backstage/create-app@0.7.6 --skip-install
 
 # Cambiar al directorio de la aplicación
 WORKDIR /app/backstage-app
