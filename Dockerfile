@@ -22,7 +22,7 @@ RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
 # Cambiar al directorio de la aplicación
 WORKDIR /app/backstage-app
 # Instalar dependencias
-RUN yarn --cwd add  jest webpack
+
 RUN yarn --cwd ./packages/backend add pg
 
 RUN yarn install --immutable --network-timeout 600000
