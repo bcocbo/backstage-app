@@ -22,10 +22,9 @@ RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
 # Cambiar al directorio de la aplicación
 WORKDIR /app/backstage-app
 # Instalar dependencias
-RUN yarn install --immutable --network-timeout 600000
+RUN yarn --cwd add  jest webpack
 RUN yarn --cwd ./packages/backend add pg
-RUN yarn --cwd ./packages/app add @backstage/plugin-kubernetes
-RUN yarn --cwd ./packages/backend add @backstage/plugin-kubernetes-backend
+
 RUN yarn install --immutable --network-timeout 600000
 
 
