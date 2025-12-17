@@ -1,8 +1,8 @@
 app:
   title: Scaffolded Backstage App
-  baseUrl: http://localhost:3000
+  baseUrl: http://apps.pocarqnube.com/backstage
   listen:
-    host: 0.0.0.0 # Added line, and now it's working
+    host: 0.0.0.0
 
 organization:
   name: My Company
@@ -14,15 +14,11 @@ backend:
   # auth:
   #   keys:
   #     - secret: ${BACKEND_SECRET}
-  auth:
-    providers:
-      guest: {}
-    dangerouslyDisableDefaultAuthPolicy: true  
-  baseUrl: http://localhost:7007
+  baseUrl: http://apps.pocarqnube.com/backstage
   listen:
-    port: 7007
+    #port: 7007
     # Uncomment the following host directive to bind to specific interfaces
-    # host: 127.0.0.1
+    host: 0.0.0.0
   csp:
     connect-src: ["'self'", 'http:', 'https:']
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
@@ -34,15 +30,12 @@ backend:
   # This is for local development only, it is not recommended to use this in production
   # The production database configuration is stored in app-config.production.yaml
   database:
-    #client: better-sqlite3
-    #connection: ':memory:'
     client: pg
     connection:
       host: ${POSTGRES_HOST}
       port: ${POSTGRES_PORT}
       user: ${POSTGRES_USER}
       password: ${POSTGRES_PASSWORD}
-
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
@@ -57,6 +50,14 @@ integrations:
     #   token: ${GHE_TOKEN}
 
 proxy:
+  '/argocd/api':
+    target: https://a1158eea44f104787a8791e8614ebfe3-1164417482.us-east-1.elb.amazonaws.com/api/v1/
+    changeOrigin: true
+    # only if your argocd api has self-signed cert
+    secure: false
+    headers:
+      Cookie:
+        $env: 'argocd.token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcmdvY2QiLCJzdWIiOiJhZG1pbjphcGlLZXkiLCJuYmYiOjE3NDc2OTE0NzksImlhdCI6MTc0NzY5MTQ3OSwianRpIjoiYjIxNWExNDctMzE2ZC00ZTVmLWE1ZmYtMjQ2NDE4NDdkYjM4In0.6pfRzgGWpJqC9oojROyVqo2NdlsXWpUpt1ECBU8jM_o'
   ### Example for how to add a proxy endpoint for the frontend.
   ### A typical reason to do this is to handle HTTPS and CORS for internal services.
   # endpoints:
@@ -80,19 +81,27 @@ auth:
   providers:
     # See https://backstage.io/docs/auth/guest/provider
     guest: {}
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET} 
+        callbackUrl: 'http://apps.pocarqnube.com/backstage/api/auth/github/handler/frame'
+        signIn:
+          resolvers:
+            - resolver: usernameMatchingUserEntityName
+
 
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
-  rules:
-    - allow: [Template]
-      resourceType: template
-      action: read
+
 catalog:
   import:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [Component, System, API, Resource, Location]    
+    - allow: [Group]
+      groupId: Rocket
   locations:
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
@@ -111,29 +120,23 @@ catalog:
         - allow: [User, Group]
 
     ## Uncomment these lines to add more example data
-    # - type: url
-    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+    ##- type: url
+    ##  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
 
     ## Uncomment these lines to add an example org
-    # - type: url
-    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
-    #   rules:
-    #     - allow: [User, Group]
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+      rules:
+       - allow: [User, Group]
+         groupId: Rocket
+  # Experimental: Always use the search method in UrlReaderProcessor.
+  # New adopters are encouraged to enable it as this behavior will be the default in a future release.
+  useUrlReadersSearch: true
 
 kubernetes:
   # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
 
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
 permission:
+  # setting this to `false` will disable permissions
   enabled: true
-  rules:
-    - allow: [CatalogEntity]  # Permite leer entidades del catálogo
-      resourceType: catalog-entity
-      action: read
-    - allow: [Component, API, User, Group]  # Para tu catalog-info.yaml
-      resourceType: catalog-entity
-      action: read
-      conditions:
-        anyOf:
-          - resourceRef: user:default/guest  # Específico para tu guest
-          - isEntityPublic: true

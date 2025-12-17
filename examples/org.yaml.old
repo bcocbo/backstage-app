@@ -5,7 +5,7 @@ kind: User
 metadata:
   name: guest
 spec:
-  memberOf: [guests]
+  memberOf: [Rocket]
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-user
 apiVersion: backstage.io/v1alpha1
@@ -13,7 +13,15 @@ kind: User
 metadata:
   name: bcocbo
 spec:
-  memberOf: [guest]
+  memberOf: [Rocket]
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-user
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: diediazping
+spec:
+  memberOf: [Rocket]
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-user
 apiVersion: backstage.io/v1alpha1
@@ -21,7 +29,7 @@ kind: User
 metadata:
   name: ispuert_cib
 spec:
-  memberOf: [guests]
+  memberOf: [Rocket]
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-user
 apiVersion: backstage.io/v1alpha1
@@ -29,13 +37,13 @@ kind: User
 metadata:
   name: saloai_cib
 spec:
-  memberOf: [guests]
+  memberOf: [Rocket]
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-group
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
-  name: guests
+  name: Rocket
 spec:
   type: team
   children: []
