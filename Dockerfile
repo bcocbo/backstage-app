@@ -22,7 +22,7 @@ RUN echo "backstage-app" | npx @backstage/create-app@latest --skip-install
 # Cambiar al directorio de la aplicación
 WORKDIR /app/backstage-app
 # Instalar dependencias
-RUN yarn add @testing-library/react@^16.0.0 react@^18.0.0 react-dom@^18.0.0
+RUN yarn install --immutable --network-timeout 600000
 RUN yarn --cwd ./packages/backend add pg
 RUN yarn --cwd ./packages/app add @backstage/plugin-kubernetes
 RUN yarn --cwd ./packages/backend add @backstage/plugin-kubernetes-backend
