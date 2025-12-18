@@ -57,13 +57,6 @@ import {
   EntityKubernetesContent,
   isKubernetesAvailable,
 } from '@backstage/plugin-kubernetes';
-// ArgoCD plugin deshabilitado - usar links directos en el catálogo
-// import {
-//   EntityArgoCDOverviewCard,
-//   EntityArgoCDHistoryCard,
-//   isArgocdAvailable,
-// } from '@roadiehq/backstage-plugin-argo-cd';
-
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -141,15 +134,6 @@ const overviewContent = (
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>
 
-    {/* ArgoCD plugin deshabilitado - usar links directos */}
-    {/* <EntitySwitch>
-      <EntitySwitch.Case if={isArgocdAvailable}>
-        <Grid item md={12} xs={12}>
-          <EntityArgoCDOverviewCard />
-        </Grid>
-      </EntitySwitch.Case>
-    </EntitySwitch> */}
-
     <Grid item md={4} xs={12}>
       <EntityLinksCard />
     </Grid>
@@ -172,18 +156,7 @@ const serviceEntityPage = (
     <EntityLayout.Route path="/kubernetes" title="Kubernetes">
       <EntityKubernetesContent refreshIntervalMs={30000} />
     </EntityLayout.Route>
-
-    {/* ArgoCD tab deshabilitado - usar links directos */}
-    {/* <EntityLayout.Route path="/argocd" title="ArgoCD" if={isArgocdAvailable}>
-      <Grid container spacing={3} alignItems="stretch">
-        <Grid item md={12}>
-          <EntityArgoCDOverviewCard />
-        </Grid>
-        <Grid item md={12}>
-          <EntityArgoCDHistoryCard />
-        </Grid>
-      </Grid>
-    </EntityLayout.Route> */}
+   
 
     <EntityLayout.Route path="/api" title="API">
       <Grid container spacing={3} alignItems="stretch">
