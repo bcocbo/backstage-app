@@ -16,9 +16,9 @@ backend.add(import('@backstage/plugin-proxy-backend'));
 // scaffolder plugin
 backend.add(import('@backstage/plugin-scaffolder-backend'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
-backend.add(
-  import('@backstage/plugin-scaffolder-backend-module-notifications'),
-);
+// backend.add(
+//   import('@backstage/plugin-scaffolder-backend-module-notifications'),
+// );
 
 // techdocs plugin
 backend.add(import('@backstage/plugin-techdocs-backend'));
@@ -59,8 +59,13 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 // kubernetes plugin
 backend.add(import('@backstage/plugin-kubernetes-backend'));
 
+// argocd plugin
+// NOTE: The Roadie ArgoCD backend plugin is not compatible with the new backend system
+// The frontend plugin will work standalone by making direct API calls to ArgoCD
+// backend.add(import('@roadiehq/backstage-plugin-argo-cd-backend'));
+
 // notifications and signals plugins
-backend.add(import('@backstage/plugin-notifications-backend'));
-backend.add(import('@backstage/plugin-signals-backend'));
+// backend.add(import('@backstage/plugin-notifications-backend'));
+// backend.add(import('@backstage/plugin-signals-backend'));
 
 backend.start();
