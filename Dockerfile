@@ -35,8 +35,11 @@ COPY catalog-info.yaml ./catalog-info.yaml
 COPY /packages/app/src/App.tsx ./packages/app/src/App.tsx
 COPY /packages/backend/src/index.ts ./packages/backend/src/index.ts
 COPY /examples ./examples
+
 # Construir la aplicación
+
 RUN yarn build:backend
+
 
 # Production stage
 FROM node:20-bullseye-slim
@@ -55,6 +58,7 @@ RUN mkdir -p /app && \
 WORKDIR /app
 USER backstage
 
+
 # Copiar TODA la aplicación construida (approach más seguro)
 COPY --from=builder --chown=backstage:backstage /app/backstage-app ./
 
@@ -65,8 +69,10 @@ RUN echo "=== RUNTIME FILES ===" && \
     ls -la packages/app/ 2>/dev/null || echo "No dist directory found" && \
     echo "=== END RUNTIME FILES ==="
 
+
+
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["sh", "-c", "yarn start   2>/dev/null"]
+CMD ["sh", "-c", "yarn workspace backend start   2>/dev/null"]
  
 #CMD ["sh", "-c", "node packages/backend/dist/index.js --config app-config.yaml & yarn workspace @backstage/app-default start"]
 #CMD ["sh", "-c", "if yarn workspace backend start 2>/dev/null; then exit 0; elif yarn dev 2>/dev/null; then exit 0; elif node packages/backend/dist/index.js 2>/dev/null; then exit 0; else echo 'No suitable start command found' && yarn --help; fi"]
