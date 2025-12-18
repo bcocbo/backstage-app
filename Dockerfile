@@ -1,5 +1,5 @@
 # Stage 1 - Create yarn install skeleton layer 
-FROM node:20-bullseye-slim as builder
+FROM node:22-bookworm-slim as builder
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -42,7 +42,7 @@ RUN yarn build:backend
 
 
 # Production stage
-FROM node:20-bullseye-slim
+FROM node:22-bookworm-slim
 
 RUN apt-get update && apt-get install -y \
     curl \
